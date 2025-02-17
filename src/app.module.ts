@@ -1,12 +1,16 @@
 import { Module } from '@nestjs/common';
 import { UserController } from './api/controllers/user.controller';
 import { UserService } from './application/services/user-service/user.service';
+import { DatabaseModule } from './database/database.module';
+import { UserModule } from './user/user.module';
 import { FilterModule } from './api/filters/filter.module';
 import { LoggerModule } from 'nestjs-pino';
 import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    DatabaseModule,
+    UserModule,
     FilterModule,
     LoggerModule.forRoot({
       pinoHttp: {
@@ -39,4 +43,4 @@ import { ThrottlerModule } from '@nestjs/throttler';
   controllers: [UserController],
   providers: [UserService],
 })
-export class AppModule {}
+export class AppModule { }
