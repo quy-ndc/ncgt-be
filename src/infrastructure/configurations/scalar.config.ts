@@ -1,6 +1,7 @@
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { INestApplication } from '@nestjs/common';
 import { apiReference } from '@scalar/nestjs-api-reference';
+import { Logger } from 'nestjs-pino';
 
 export function SetupScalar(app: INestApplication): void {
   const config = new DocumentBuilder()
@@ -21,7 +22,7 @@ export function SetupScalar(app: INestApplication): void {
       },
     }),
   );
-  //SwaggerModule.setup('api-docs', app, document);
 
-  console.info('Scalar setup complete');
+  const logger = app.get(Logger);
+  logger.log('SetupScalar complete');
 }

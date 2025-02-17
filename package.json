@@ -24,6 +24,7 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/swagger": "^11.0.3",
+    "@nestjs/throttler": "^6.4.0",
     "@scalar/nestjs-api-reference": "^0.3.182",
     "nestjs-pino": "^4.3.0",
     "pino": "^9.6.0",
