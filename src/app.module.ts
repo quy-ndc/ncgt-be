@@ -3,10 +3,26 @@ import { UserController } from './api/controllers/user.controller';
 import { UserService } from './application/services/user-service/user.service';
 import { DatabaseModule } from './database/database.module';
 import { UserModule } from './user/user.module';
+import { FilterModule } from './api/filters/filter.module';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
-  imports: [DatabaseModule, UserModule],
+  imports: [
+    DatabaseModule,
+    UserModule,
+    FilterModule,
+    LoggerModule.forRoot({
+      pinoHttp: {
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            colorize: true,
+          },
+        },
+      },
+    }),
+  ],
   controllers: [UserController],
   providers: [UserService],
 })
-export class AppModule {}
+export class AppModule { }

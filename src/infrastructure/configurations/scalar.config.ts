@@ -22,4 +22,6 @@ export function SetupScalar(app: INestApplication): void {
     }),
   );
   //SwaggerModule.setup('api-docs', app, document);
+
+  console.info('Scalar setup complete');
 }
