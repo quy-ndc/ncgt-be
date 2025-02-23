@@ -1,30 +1,59 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { UserService } from '../../application/services/user-service/user.service';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { ResponseAPI } from '../../shared/models/common/api-response.model';
+import { UserResponseDto } from '../../shared/models/user/user.response.dto';
+import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
+import { UserFilterDto } from '../../shared/models/user/user.filter.dto';
+import { pick } from 'lodash';
+import { plainToInstance } from 'class-transformer';
 
-@Controller('users')
+@Controller('user')
 export class UserController {
-  constructor(private readonly appService: UserService) {}
+  constructor(private readonly userService: UserService) {}
+
+  // @Post()
+  // create(@Body() createUserDto: Prisma.UserCreateInput) {
+  //   return this.userService.create(createUserDto);
+  // }
 
   @Get()
-  @ApiOperation({ summary: 'Get Hello' })
-  @ApiResponse({ status: 200, description: 'Just Test' })
-  getHello(): ResponseAPI<string> {
-    return this.appService.getHello();
+  @ApiQuery({ name: 'search', required: false, description: 'Search term' })
+  @ApiQuery({ name: 'gender', required: false, description: 'User gender' })
+  @ApiQuery({ name: 'dob', required: false, description: 'Date of birth' })
+  @ApiQuery({ name: 'dod', required: false, description: 'Date of death' })
+  @ApiQuery({ name: 'job', required: false, description: 'User job' })
+  @ApiOperation({ summary: 'Get Users' })
+  @ApiResponse({
+    status: 200,
+    isArray: true,
+    type: UserResponseDto,
+  })
+  async findAll(
+    @Query() query: Record<string, any>,
+  ): Promise<UserResponseDto[]> {
+    const validKeys = Object.keys(new UserFilterDto()); // Get all valid keys
+    const filteredQuery = pick(query, validKeys); // Pick only valid keys
+
+    const filter = plainToInstance(UserFilterDto, filteredQuery);
+
+    return this.userService.getUsers(filter);
   }
 
-  @Get('test')
-  @ApiOperation({ summary: 'Get all users' })
-  @ApiResponse({ status: 200, description: 'Returns a list of users' })
-  getAllUsers() {
-    return [{ id: 1, name: 'John Doe' }];
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.userService.getUser(id);
   }
 
-  @Get('error')
-  @ApiOperation({ summary: 'Get error' })
-  @ApiResponse({ status: 500, description: 'Returns an error' })
-  getError() {
-    throw new Error('This is an error');
-  }
+  //
+  // @Patch(':id')
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateUserDto: Prisma.UserUpdateInput,
+  // ) {
+  //   return this.userService.update(id, updateUserDto);
+  // }
+  //
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.userService.remove(id);
+  // }
 }
